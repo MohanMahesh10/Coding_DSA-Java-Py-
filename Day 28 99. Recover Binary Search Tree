@@ -1,24 +1,34 @@
 class Solution {
-  public List<TreeNode> generateTrees(int n) {
-    if (n == 0)
-      return new ArrayList<>();
-    return generateTrees(1, n);
+  public void recoverTree(TreeNode root) {
+    inorder(root);
+    swap(x, y);
   }
 
-  private List<TreeNode> generateTrees(int mn, int mx) {
-    if (mn > mx)
-      return Arrays.asList((TreeNode) null);
+  private TreeNode pred = null;
+  private TreeNode x = null; // the first wrong node
+  private TreeNode y = null; // the second wrong node
 
-    List<TreeNode> ans = new ArrayList<>();
+  private void inorder(TreeNode root) {
+    if (root == null)
+      return;
 
-    for (int i = mn; i <= mx; ++i)
-      for (TreeNode left : generateTrees(mn, i - 1))
-        for (TreeNode right : generateTrees(i + 1, mx)) {
-          ans.add(new TreeNode(i));
-          ans.get(ans.size() - 1).left = left;
-          ans.get(ans.size() - 1).right = right;
-        }
+    inorder(root.left);
 
-    return ans;
+    if (pred != null && root.val < pred.val) {
+      y = root;
+      if (x == null)
+        x = pred;
+      else
+        return;
+    }
+    pred = root;
+
+    inorder(root.right);
+  }
+
+  private void swap(TreeNode x, TreeNode y) {
+    final int temp = x.val;
+    x.val = y.val;
+    y.val = temp;
   }
 }
