@@ -1,0 +1,27 @@
+import java.util.*;
+
+class Solution {
+  public List<List<Integer>> levelOrder(TreeNode root) {
+    if (root == null) return new ArrayList<>();
+
+    List<List<Integer>> ans = new ArrayList<>();
+    Queue<TreeNode> q = new LinkedList<>();
+    q.offer(root);
+
+    while (!q.isEmpty()) {
+      int sz = q.size();
+      List<Integer> currLevel = new ArrayList<>(sz);
+
+      while (sz-- > 0) {
+        TreeNode node = q.poll();
+        currLevel.add(node.val);
+        if (node.left != null) q.offer(node.left);
+        if (node.right != null) q.offer(node.right);
+      }
+
+      ans.add(currLevel);
+    }
+
+    return ans;
+  }
+}
