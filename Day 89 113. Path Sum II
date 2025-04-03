@@ -1,0 +1,41 @@
+import java.util.*;
+
+class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        List<List<Integer>> result = new ArrayList<>();
+        if (root == null) return result;
+
+        Stack<Pair<TreeNode, List<Integer>>> stack = new Stack<>();
+        Stack<Integer> sumStack = new Stack<>();
+        
+        stack.push(new Pair<>(root, new ArrayList<>(Arrays.asList(root.val))));
+        sumStack.push(root.val);
+
+        while (!stack.isEmpty()) {
+            Pair<TreeNode, List<Integer>> p = stack.pop();
+            TreeNode node = p.getKey();
+            List<Integer> path = p.getValue();
+            int sum = sumStack.pop();
+
+            if (node.left == null && node.right == null && sum == targetSum) {
+                result.add(new ArrayList<>(path));
+            }
+
+            if (node.right != null) {
+                List<Integer> newPath = new ArrayList<>(path);
+                newPath.add(node.right.val);
+                stack.push(new Pair<>(node.right, newPath));
+                sumStack.push(sum + node.right.val);
+            }
+
+            if (node.left != null) {
+                List<Integer> newPath = new ArrayList<>(path);
+                newPath.add(node.left.val);
+                stack.push(new Pair<>(node.left, newPath));
+                sumStack.push(sum + node.left.val);
+            }
+        }
+        
+        return result;
+    }
+}
