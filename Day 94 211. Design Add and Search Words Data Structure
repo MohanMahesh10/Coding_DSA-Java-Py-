@@ -1,0 +1,51 @@
+class WordDictionary {
+    private class TrieNode {
+        TrieNode[] children;
+        boolean isWord;
+        
+        public TrieNode() {
+            children = new TrieNode[26]; // for 'a' to 'z'
+            isWord = false;
+        }
+    }
+
+    private final TrieNode root;
+
+    public WordDictionary() {
+        root = new TrieNode();
+    }
+    
+    public void addWord(String word) {
+        TrieNode node = root;
+        for (char ch : word.toCharArray()) {
+            int i = ch - 'a';
+            if (node.children[i] == null) {
+                node.children[i] = new TrieNode();
+            }
+            node = node.children[i];
+        }
+        node.isWord = true;
+    }
+    
+    public boolean search(String word) {
+        return searchInNode(word, 0, root);
+    }
+    
+    private boolean searchInNode(String word, int index, TrieNode node) {
+        if (node == null) return false;
+        if (index == word.length()) return node.isWord;
+        
+        char ch = word.charAt(index);
+        if (ch == '.') {
+            // Try all possible children
+            for (TrieNode child : node.children) {
+                if (child != null && searchInNode(word, index + 1, child)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return searchInNode(word, index + 1, node.children[ch - 'a']);
+        }
+    }
+}
