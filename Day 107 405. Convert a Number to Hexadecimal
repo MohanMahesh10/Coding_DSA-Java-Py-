@@ -1,0 +1,17 @@
+class Solution {
+    public String toHex(int num) {
+        if (num == 0) return "0";
+        
+        char[] hexChars = "0123456789abcdef".toCharArray();
+        StringBuilder hex = new StringBuilder();
+
+        // We only need 8 hex digits for a 32-bit integer
+        for (int i = 0; i < 8 && num != 0; i++) {
+            int val = num & 0xf; // get the last 4 bits
+            hex.append(hexChars[val]);
+            num >>>= 4; // unsigned right shift by 4 bits
+        }
+
+        return hex.reverse().toString();
+    }
+}
