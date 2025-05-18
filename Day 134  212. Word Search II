@@ -1,0 +1,60 @@
+class Solution {
+    class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        String word = null; // If not null, indicates the end of a word
+    }
+
+    public List<String> findWords(char[][] board, String[] words) {
+        List<String> result = new ArrayList<>();
+
+        // Build Trie
+        TrieNode root = new TrieNode();
+        for (String word : words) {
+            TrieNode node = root;
+            for (char c : word.toCharArray()) {
+                int i = c - 'a';
+                if (node.children[i] == null) {
+                    node.children[i] = new TrieNode();
+                }
+                node = node.children[i];
+            }
+            node.word = word; // Mark the end of a word
+        }
+
+        // Search on the board
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[0].length; col++) {
+                dfs(board, row, col, root, result);
+            }
+        }
+
+        return result;
+    }
+
+    private void dfs(char[][] board, int row, int col, TrieNode node, List<String> result) {
+        char c = board[row][col];
+        if (c == '#' || node.children[c - 'a'] == null) return;
+
+        node = node.children[c - 'a'];
+        if (node.word != null) {
+            result.add(node.word);
+            node.word = null; // Avoid duplicates
+        }
+
+        board[row][col] = '#'; // Mark visited
+
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+
+        for (int i = 0; i < 4; i++) {
+            int newRow = row + dx[i];
+            int newCol = col + dy[i];
+
+            if (newRow >= 0 && newRow < board.length && newCol >= 0 && newCol < board[0].length) {
+                dfs(board, newRow, newCol, node, result);
+            }
+        }
+
+        board[row][col] = c; // Restore original value
+    }
+}
