@@ -1,0 +1,40 @@
+class Solution{
+    public double[] medianSlidingWindow(int[] nums, int k) {
+        double[] result = new double[nums.length - k + 1];
+        TreeMap<Integer, Integer> window = new TreeMap<>();
+        for(int i =0; i < k; i++){
+            window.put(nums[i], window.getOrDefault(nums[i], 0) +1);
+        }
+        result[0] = getMedian(window, k);
+        for (int i = k; i < nums.length; i++) {
+            int outNum = nums[i - k];
+            if (window.get(outNum) ==1) {
+                window.remove(outNum);
+            } else {
+                window.put(outNum, window.get(outNum) -1);
+            }
+            window.put(nums[i], window.getOrDefault(nums[i], 0)+ 1);
+            result[ i - k + 1] = getMedian(window, k);
+        }
+        return result;
+    }
+    private double getMedian(TreeMap<Integer, Integer> window, int k) {
+        int count =0;
+        int left = 0, right =0;
+        int leftVal = 0, rightVal = 0;
+
+        for (int n : window.keySet()) {
+            count += window.get(n);
+            if (left ==0 && count >= (k+1) / 2) {
+                leftVal =n;
+                left = 1;
+            }
+            if (count >= (k / 2 +1)) {
+                rightVal = n;
+                break;
+            }
+        }
+
+        return k % 2 == 1? (double) leftVal : ((double) leftVal + rightVal) / 2.0;
+    }
+}
