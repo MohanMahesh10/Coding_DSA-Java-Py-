@@ -1,0 +1,24 @@
+class Solution {
+    public int findMinMoves(int[] machines) {
+        int total =0;
+        for(int num : machines) total += num;
+        int n = machines.length;
+        if (total % n != 0) return -1;
+        int target = total / n;
+        int maxMoves = 0;
+        int diffSum = 0;
+
+        for (int i = 0; i < n; i++) {
+            int diff = machines[i] - target;
+            diffSum += diff;
+
+            maxMoves = Math.max(maxMoves, Math.max(Math.abs(diffSum), diff));
+
+        }
+
+        return maxMoves;
+        
+
+        
+    }
+}
