@@ -1,0 +1,70 @@
+class Solution { 
+    public List<String> braceExpansionII(String expression) { 
+        // Parse the expression and get all possible words as a set to avoid duplicates
+        Set<String> res = dfs(expression); 
+        // Convert the set to a list and sort it lexicographically
+        List<String> ans = new ArrayList<>(res); 
+        Collections.sort(ans); 
+        return ans; 
+    } 
+    // Helper function to recursively expand the expression
+    private Set<String> dfs(String expr) { 
+        Set<String> res = new HashSet<>(); // Store the results
+        int n = expr.length(); // Length of the expression
+        int level = 0; // Track brace nesting
+        List<String> parts = new ArrayList<>(); // Store union parts
+        StringBuilder sb = new StringBuilder(); // Build current part
+        for (int i = 0; i < n; ++i) { // Iterate over the expression
+            char c = expr.charAt(i); // Current character
+            if (c == '{') level++; // Increase nesting level for '{'
+            if (c == '}') level--; // Decrease nesting level for '}'
+            if (c == ',' && level == 0) { // Union separator at base level
+                parts.add(sb.toString()); // Add the part to parts
+                sb = new StringBuilder(); // Start a new part
+            } else {
+                sb.append(c); // Add character to current part
+            }
+        }
+        parts.add(sb.toString()); // Add the last part
+        
+        if (parts.size() > 1) { // If there are multiple union parts
+            for (String part : parts) { // For each part
+                res.addAll(dfs(part)); // Recursively expand and add to result
+            }
+            return res; // Return the union result
+        }
+        
+        // Now handle concatenation
+        List<Set<String>> groups = new ArrayList<>(); // Store sets for concatenation
+        int i = 0; 
+        while (i < n) { // Parse the expression for concatenation groups
+            if (expr.charAt(i) == '{') { // If group starts with '{'
+                int j = i, cnt = 0; // Find matching '}'
+                for (; i < n; ++i) {
+                    if (expr.charAt(i) == '{') cnt++;
+                    if (expr.charAt(i) == '}') cnt--;
+                    if (cnt == 0) break;
+                }
+                groups.add(dfs(expr.substring(j + 1, i))); // Recursively expand inside braces
+                i++; // Move past '}'
+            } else { // Single character group
+                int j = i;
+                while (i < n && Character.isLetter(expr.charAt(i))) i++;
+                groups.add(new HashSet<>(Arrays.asList(expr.substring(j, i))));
+            }
+        }
+        
+        // Cartesian product for concatenation
+        res.add(""); // Start with empty string for concatenation
+        for (Set<String> group : groups) { // For every set in groups
+            Set<String> tmp = new HashSet<>(); // Temporary store for new combinations
+            for (String s1 : res) { // For every result so far
+                for (String s2 : group) { // For every string in current group
+                    tmp.add(s1 + s2); // Concatenate and add to tmp
+                }
+            }
+            res = tmp; // Update result with new combinations
+        }
+        return res; // Return the final set
+    }
+}
