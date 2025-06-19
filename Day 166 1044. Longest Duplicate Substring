@@ -1,0 +1,59 @@
+class Solution {
+    public String longestDupSubstring(String s) {
+        int n = s.length();
+        int left = 1, right = n - 1;
+        int start = -1, maxLen = 0;
+        int base = 256;
+
+        long MOD1 = (1L << 31) - 1;
+        long MOD2 = (1L << 32) - 5;
+
+        long[] pow1 = new long[n];
+        long[] pow2 = new long[n];
+        pow1[0] = pow2[0] = 1;
+        for (int i = 1; i < n; i++) {
+            pow1[i] = (pow1[i - 1] * base) % MOD1;
+            pow2[i] = (pow2[i - 1] * base) % MOD2;
+        }
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int idx = search(s, mid, pow1, pow2, MOD1, MOD2, base);
+            if (idx != -1) {
+                start = idx;
+                maxLen = mid;
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return start == -1 ? "" : s.substring(start, start + maxLen);
+    }
+
+    private int search(String s, int len, long[] pow1, long[] pow2,
+                       long MOD1, long MOD2, int base) {
+        int n = s.length();
+        long hash1 = 0, hash2 = 0;
+        for (int i = 0; i < len; i++) {
+            hash1 = (hash1 * base + s.charAt(i)) % MOD1;
+            hash2 = (hash2 * base + s.charAt(i)) % MOD2;
+        }
+        Set<Long> seen = new HashSet<>();
+        seen.add(hash1 * MOD2 + hash2);
+
+        for (int i = 1; i <= n - len; i++) {
+            hash1 = (hash1 - s.charAt(i - 1) * pow1[len - 1] % MOD1 + MOD1) % MOD1;
+            hash1 = (hash1 * base + s.charAt(i + len - 1)) % MOD1;
+
+            hash2 = (hash2 - s.charAt(i - 1) * pow2[len - 1] % MOD2 + MOD2) % MOD2;
+            hash2 = (hash2 * base + s.charAt(i + len - 1)) % MOD2;
+
+            long combined = hash1 * MOD2 + hash2;
+            if (seen.contains(combined)) {
+                return i;
+            }
+            seen.add(combined);
+        }
+        return -1;
+    }
+}
