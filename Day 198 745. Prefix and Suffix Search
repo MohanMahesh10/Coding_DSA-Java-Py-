@@ -1,19 +1,25 @@
+import java.util.*;
+
 class WordFilter {
-    private String[] words;
+    private Map<String, Integer> map;
 
     public WordFilter(String[] words) {
-        this.words = words;
+        map = new HashMap<>();
+        for (int index = 0; index < words.length; index++) {
+            String word = words[index];
+            int len = word.length();
 
-        
-    }
-    
-    public int f(String pref, String suff) {
-        for (int i = words.length - 1; i >= 0; i--) {
-            if (words[i].startsWith(pref) && words[i].endsWith(suff)) {
-                return i;
+            for (int p = 0; p <= len; p++) {
+                String prefix = word.substring(0, p);
+                for (int s = 0; s <= len; s++) {
+                    String suffix = word.substring(len - s, len);
+                    map.put(prefix + "#" + suffix, index);
+                }
             }
         }
-        return -1;
-        
+    }
+
+    public int f(String pref, String suff) {
+        return map.getOrDefault(pref + "#" + suff, -1);
     }
 }
