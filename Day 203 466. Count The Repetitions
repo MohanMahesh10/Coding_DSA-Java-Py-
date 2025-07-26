@@ -1,0 +1,33 @@
+class Solution {
+    public int getMaxRepetitions(String s1, int n1, String s2, int n2) {
+        if (n1 == 0) return 0;
+
+        int s1Len = s1.length(), s2Len =  s2.length();
+        int[] repeatCount = new int[n1 + 1];
+        int[] nextIndex = new int[n1 + 1];
+        int j = 0, count = 0;
+
+        for (int k = 1; k <= n1; k++) {
+            for (int i = 0; i < s1Len; i++) {
+                if (s1.charAt(i) == s2.charAt(j)) {
+                    j++;
+                    if (j == s2Len) {
+                        j = 0;
+                        count++;
+                    }
+                }
+            }
+            repeatCount[k] = count;
+            nextIndex[k] = j;
+            for (int start = 0; start < k; start++) {
+                if (nextIndex[start] == j) {
+                    int prefix = repeatCount[start];
+                    int pattern = (repeatCount[k] - repeatCount[start]) * ((n1 - start) / (k - start));
+                    int suffix = repeatCount[start + (n1 - start) % (k - start)] - repeatCount[start];
+                    return (prefix + pattern + suffix) / n2;
+                }
+            }
+        }
+        return repeatCount[n1] / n2;
+    }
+}
