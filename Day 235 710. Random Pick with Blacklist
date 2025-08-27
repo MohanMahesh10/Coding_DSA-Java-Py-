@@ -1,0 +1,41 @@
+import java.util.*;
+
+
+class Solution {
+    private final Map<Integer, Integer> map;   
+    private final int m;                     
+    private final Random rnd;
+
+    public Solution(int n, int[] blacklist) {
+        rnd = new Random();
+        map = new HashMap<>();
+
+       
+        m = n - blacklist.length;
+
+        
+        Set<Integer> highBlocked = new HashSet<>();
+        for (int b : blacklist) {
+            if (b >= m) highBlocked.add(b);
+        }
+
+        
+        int next = m;
+        for (int b : blacklist) {
+           
+            if (b < m) {
+               
+                while (highBlocked.contains(next)) next++;
+                map.put(b, next);
+                next++;
+            }
+        }
+    }
+
+    public int pick() {
+        
+        int x = rnd.nextInt(m);
+        
+        return map.getOrDefault(x, x);
+    }
+}
