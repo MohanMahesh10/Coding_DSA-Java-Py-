@@ -1,0 +1,31 @@
+class Solution {
+
+    private long f(long x) {
+        long cnt = 0, d = 5;
+        while (d <= x) {          
+            cnt += x / d;
+         
+            if (d > Long.MAX_VALUE / 5) break;
+            d *= 5;
+        }
+        return cnt;
+    }
+
+
+    private long lowerBound(long target) {
+        long lo = 0, hi = 5 * target + 5;   
+        while (lo < hi) {
+            long mid = lo + ((hi - lo) >>> 1);
+            if (f(mid) >= target) hi = mid;
+            else lo = mid + 1;
+        }
+        return lo;
+    }
+
+    public int preimageSizeFZF(int k) {
+        long a = lowerBound(k);
+        long b = lowerBound(k + 1);
+        long diff = b - a;        
+        return diff == 5 ? 5 : 0;
+    }
+}
