@@ -1,0 +1,54 @@
+import java.util.*;
+
+class Solution {
+    public List<String> watchedVideosByFriends(List<List<String>> watchedVideos, int[][] friends, int id, int level) {
+        int n = watchedVideos.size();
+        Queue<int[]> q = new LinkedList<>();
+        boolean[] visited = new boolean[n];
+        q.offer(new int[]{id, 0});
+        visited[id] = true;
+        
+        Set<Integer> targetIds = new HashSet<>();
+        while (!q.isEmpty()) {
+            int[] curr = q.poll();
+            int currId = curr[0];
+            int currLevel = curr[1];
+            
+            if (currLevel == level) {
+                targetIds.add(currId);
+                continue;
+            }
+            
+            if (currLevel > level) {
+                break;
+            }
+            
+            for (int friendId : friends[currId]) {
+                if (!visited[friendId]) {
+                    visited[friendId] = true;
+                    q.offer(new int[]{friendId, currLevel + 1});
+                }
+            }
+        }
+        
+        Map<String, Integer> freqMap = new HashMap<>();
+        for (int personId : targetIds) {
+            for (String video : watchedVideos.get(personId)) {
+                freqMap.put(video, freqMap.getOrDefault(video, 0) + 1);
+            }
+        }
+        
+        List<String> result = new ArrayList<>(freqMap.keySet());
+        result.sort((a, b) -> {
+            int freqA = freqMap.get(a);
+            int freqB = freqMap.get(b);
+            if (freqA != freqB) {
+                return Integer.compare(freqA, freqB);
+            } else {
+                return a.compareTo(b);
+            }
+        });
+        
+        return result;
+    }
+}
