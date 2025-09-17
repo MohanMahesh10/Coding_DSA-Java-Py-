@@ -1,0 +1,50 @@
+import java.util.*;
+
+class Solution {
+
+    private List<String> getValid(String s) {
+        List<String> res = new ArrayList<>();
+        int n = s.length();
+
+        if (n == 1 || s.charAt(0) != '0') {
+            res.add(s);
+        } else if (s.equals("0")) {
+            res.add(s);
+        }
+
+        for (int i = 1; i < n; ++i) {
+            String left = s.substring(0, i);
+            String right = s.substring(i);
+
+            if (left.length() > 1 && left.charAt(0) == '0') continue;
+            if (right.charAt(right.length() - 1) == '0') continue;
+
+            res.add(left + "." + right);
+        }
+        return res;
+    }
+
+    public List<String> ambiguousCoordinates(String s) {
+        List<String> res = new ArrayList<>();
+        String str = s.substring(1, s.length() - 1);
+        int n = str.length();
+
+        for (int i = 1; i < n; ++i) {
+            List<String> lefts = getValid(str.substring(0, i));
+            List<String> rights = getValid(str.substring(i));
+            for (String l : lefts) {
+                for (String r : rights) {
+                    res.add("(" + l + ", " + r + ")");
+                }
+            }
+        }
+        return res;
+    }
+
+    public static void main(String[] args) {
+        Solution sol = new Solution();
+        System.out.println(sol.ambiguousCoordinates("(123)"));
+        System.out.println(sol.ambiguousCoordinates("(0123)"));
+        System.out.println(sol.ambiguousCoordinates("(00011)"));
+    }
+}
