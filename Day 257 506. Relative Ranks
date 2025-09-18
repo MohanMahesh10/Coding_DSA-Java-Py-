@@ -1,0 +1,24 @@
+class Solution {
+    public String[] findRelativeRanks(int[] score) {
+        int n = score.length;
+
+        Integer[] idx = new Integer[n];
+        Arrays.setAll(idx, i -> i);
+
+       
+        Arrays.sort(idx, (a, b) -> Integer.compare(score[b], score[a]));
+
+        String[] ans = new String[n];
+        String[] medals = {"Gold Medal", "Silver Medal", "Bronze Medal"};
+
+        for (int rank = 0; rank < n; rank++) {
+            int original = idx[rank];
+            if (rank < 3) {
+                ans[original] = medals[rank];
+            } else {
+                ans[original] = String.valueOf(rank + 1); 
+            }
+        }
+        return ans;
+    }
+}
