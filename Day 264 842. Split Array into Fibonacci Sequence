@@ -1,0 +1,30 @@
+class Solution {
+    public List<Integer> splitIntoFibonacci(String num) {
+        List<Integer> res = new ArrayList<>();
+        dfs(num, res, 0);
+        return res.size() >= 3 ? res : new ArrayList<>();
+    }
+    
+    private boolean dfs(String s, List<Integer> res, int idx) {
+        if (idx == s.length()) {
+            return res.size() >= 3;
+        }
+        long maxInt = Integer.MAX_VALUE;
+        long currNum = 0;
+        for (int i = idx; i < s.length(); i++) {
+            if (i > idx && s.charAt(idx) == '0') break;
+            currNum = currNum * 10 + (s.charAt(i) - '0');
+            if (currNum > maxInt) break;
+            int size = res.size();
+            if (size >= 2) {
+                long sum = (long)res.get(size - 2) + (long)res.get(size - 1);
+                if (currNum < sum) continue;
+                if (currNum > sum) break;
+            }
+            res.add((int)currNum);
+            if (dfs(s, res, i + 1)) return true;
+            res.remove(res.size() - 1);
+        }
+        return false;
+    }
+}
