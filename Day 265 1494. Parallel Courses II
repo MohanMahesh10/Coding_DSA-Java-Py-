@@ -1,0 +1,28 @@
+class Solution {
+    public int minNumberOfSemesters(int n, int[][] relations, int k) {
+        int[] prereq = new int[n];
+        for (int[] rel : relations) {
+            int prev = rel[0] - 1, next = rel[1] - 1;
+            prereq[next] |= (1 << prev);
+        }
+        int fullMask = (1 << n) - 1;
+        int[] dp = new int[1 << n];
+        Arrays.fill(dp, Integer.MAX_VALUE / 2);
+        dp[0] = 0;
+        for (int mask = 0; mask <= fullMask; mask++) {
+            if (dp[mask] >= Integer.MAX_VALUE / 2) continue;
+            int available = 0;
+            for (int i = 0; i < n; i++) {
+                if (((mask >> i) & 1) == 0 && (prereq[i] & mask) == prereq[i]) {
+                    available |= (1 << i);
+                }
+            }
+            for (int sub = available; sub > 0; sub = (sub - 1) & available) {
+                if (Integer.bitCount(sub) <= k) {
+                    dp[mask | sub] = Math.min(dp[mask | sub], dp[mask] + 1);
+                }
+            }
+        }
+        return dp[fullMask];
+    }
+}
