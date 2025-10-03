@@ -1,0 +1,38 @@
+import java.util.*;
+
+class Solution {
+    public List<Integer> numberOfAlternatingGroups(int[] colors, int[][] queries) {
+        int n = colors.length;
+        int[] alt = new int[n];
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) alt[i] = (colors[i] != colors[(i + 1) % n]) ? 1 : 0;
+        for (int[] q : queries) {
+            if (q[0] == 2) {
+                int idx = q[1], newColor = q[2];
+                if (colors[idx] == newColor) continue;
+                colors[idx] = newColor;
+                int prev = (idx - 1 + n) % n;
+                alt[prev] = (colors[prev] != colors[idx]) ? 1 : 0;
+                alt[idx] = (colors[idx] != colors[(idx + 1) % n]) ? 1 : 0;
+            } else {
+                ans.add(countAlternatingGroups(alt, q[1]));
+            }
+        }
+        return ans;
+    }
+
+    private int countAlternatingGroups(int[] alt, int k) {
+        int n = alt.length, target = k - 1, count = 0, length = 0;
+        for (int i = 0; i < n * 2; i++) {
+            int val = alt[i % n];
+            if (val == 1) length++;
+            else {
+                if (length >= target) count += length - target + 1;
+                length = 0;
+            }
+            if (i >= n && length >= target) break;
+        }
+        if (length >= target) count += length - target + 1;
+        return count;
+    }
+}
