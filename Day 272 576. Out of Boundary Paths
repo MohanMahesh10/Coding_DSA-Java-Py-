@@ -1,0 +1,27 @@
+class Solution {
+    public int findPaths(int m, int n, int maxMove, int startRow, int startColumn) {
+        int MOD = 1000000007;
+        int[][][] dp = new int[m][n][maxMove + 1];
+        for (int move = 1; move <= maxMove; move++) {
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    int cnt = 0;
+                    if (i == 0) cnt++;
+                    if (i == m - 1) cnt++;
+                    if (j == 0) cnt++;
+                    if (j == n - 1) cnt++;
+                    dp[i][j][move] = (dp[i][j][move] + cnt) % MOD;
+                    if (i > 0)
+                        dp[i][j][move] = (dp[i][j][move] + dp[i - 1][j][move - 1]) % MOD;
+                    if (i < m - 1)
+                        dp[i][j][move] = (dp[i][j][move] + dp[i + 1][j][move - 1]) % MOD;
+                    if (j > 0)
+                        dp[i][j][move] = (dp[i][j][move] + dp[i][j - 1][move - 1]) % MOD;
+                    if (j < n - 1)
+                        dp[i][j][move] = (dp[i][j][move] + dp[i][j + 1][move - 1]) % MOD;
+                }
+            }
+        }
+        return dp[startRow][startColumn][maxMove];
+    }
+}
