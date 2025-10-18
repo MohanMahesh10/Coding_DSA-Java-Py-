@@ -1,0 +1,50 @@
+class Solution {
+    static final int MOD = 1000000007;
+    int[][][][] dp;
+    int[] lps;
+    String s1, s2, evil;
+    int n, m;
+
+    public int findGoodStrings(int n, String s1, String s2, String evil) {
+        this.n = n;
+        this.s1 = s1;
+        this.s2 = s2;
+        this.evil = evil;
+        this.m = evil.length();
+        this.dp = new int[n + 1][m + 1][2][2];
+        for (int i = 0; i <= n; i++)
+            for (int j = 0; j <= m; j++)
+                for (int k = 0; k < 2; k++)
+                    for (int l = 0; l < 2; l++)
+                        dp[i][j][k][l] = -1;
+        buildLPS();
+        return dfs(0, 0, 1, 1);
+    }
+
+    void buildLPS() {
+        lps = new int[m];
+        for (int i = 1, len = 0; i < m;) {
+            if (evil.charAt(i) == evil.charAt(len)) lps[i++] = ++len;
+            else if (len > 0) len = lps[len - 1];
+            else lps[i++] = 0;
+        }
+    }
+
+    int dfs(int i, int j, int tight1, int tight2) {
+        if (j == m) return 0;
+        if (i == n) return 1;
+        if (dp[i][j][tight1][tight2] != -1) return dp[i][j][tight1][tight2];
+        int res = 0;
+        char from = tight1 == 1 ? s1.charAt(i) : 'a';
+        char to = tight2 == 1 ? s2.charAt(i) : 'z';
+        for (char c = from; c <= to; c++) {
+            int nextTight1 = (tight1 == 1 && c == from) ? 1 : 0;
+            int nextTight2 = (tight2 == 1 && c == to) ? 1 : 0;
+            int k = j;
+            while (k > 0 && evil.charAt(k) != c) k = lps[k - 1];
+            if (evil.charAt(k) == c) k++;
+            res = (res + dfs(i + 1, k, nextTight1, nextTight2)) % MOD;
+        }
+        return dp[i][j][tight1][tight2] = res;
+    }
+}
