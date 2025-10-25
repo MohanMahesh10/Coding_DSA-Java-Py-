@@ -1,0 +1,26 @@
+class Solution {
+    public int[] gardenNoAdj(int n, int[][] paths) {
+        int[][] g = new int[n][];
+        int[] deg = new int[n];
+        for (int[] e : paths) {
+            deg[e[0] - 1]++;
+            deg[e[1] - 1]++;
+        }
+        int[][] tmp = new int[n][];
+        for (int i = 0; i < n; i++) tmp[i] = new int[deg[i]];
+        int[] idx = new int[n];
+        for (int[] e : paths) {
+            int u = e[0] - 1, v = e[1] - 1;
+            tmp[u][idx[u]++] = v;
+            tmp[v][idx[v]++] = u;
+        }
+        g = tmp;
+        int[] ans = new int[n];
+        for (int i = 0; i < n; i++) {
+            boolean[] used = new boolean[5];
+            for (int v : g[i]) used[ans[v]] = true;
+            for (int c = 1; c <= 4; c++) if (!used[c]) { ans[i] = c; break; }
+        }
+        return ans;
+    }
+}
