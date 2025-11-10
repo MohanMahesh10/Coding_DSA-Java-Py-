@@ -1,0 +1,41 @@
+import java.util.*;
+
+class SummaryRanges {
+    private final TreeMap<Integer, Integer> map;
+
+    public SummaryRanges() {
+        map = new TreeMap<>();
+    }
+    
+    public void addNum(int value) {
+        Integer l = map.floorKey(value);
+        if (l != null && map.get(l) >= value) return;
+        Integer r = map.ceilingKey(value);
+        boolean mergeLeft = l != null && map.get(l) + 1 == value;
+        boolean mergeRight = r != null && r - 1 == value;
+        if (mergeLeft && mergeRight) {
+            int end = map.get(r);
+            map.remove(r);
+            map.put(l, end);
+        } else if (mergeLeft) {
+            map.put(l, value);
+        } else if (mergeRight) {
+            int end = map.get(r);
+            map.remove(r);
+            map.put(value, end);
+        } else {
+            map.put(value, value);
+        }
+    }
+    
+    public int[][] getIntervals() {
+        int[][] res = new int[map.size()][2];
+        int i = 0;
+        for (Map.Entry<Integer, Integer> e : map.entrySet()) {
+            res[i][0] = e.getKey();
+            res[i][1] = e.getValue();
+            i++;
+        }
+        return res;
+    }
+}
