@@ -1,0 +1,14 @@
+class Solution {
+    public int numRabbits(int[] answers) {
+        java.util.Map<Integer, Integer> map = new java.util.HashMap<>();
+        for (int a : answers) map.put(a, map.getOrDefault(a, 0) + 1);
+        int result = 0;
+        for (int k : map.keySet()) {
+            int count = map.get(k);
+            int groupSize = k + 1;
+            int groups = (count + groupSize - 1) / groupSize;
+            result += groups * groupSize;
+        }
+        return result;
+    }
+}
