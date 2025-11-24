@@ -1,0 +1,53 @@
+import java.util.*;
+
+class Solution {
+    static class Node {
+        int val;
+        int row;
+        int idx;
+        Node(int v, int r, int i) {
+            val = v;
+            row = r;
+            idx = i;
+        }
+    }
+
+    public int[] smallestRange(List<List<Integer>> nums) {
+        int k = nums.size();
+        PriorityQueue<Node> pq = new PriorityQueue<>(new Comparator<Node>() {
+            public int compare(Node a, Node b) {
+                return Integer.compare(a.val, b.val);
+            }
+        });
+
+        int currentMax = Integer.MIN_VALUE;
+        for (int i = 0; i < k; i++) {
+            int v = nums.get(i).get(0);
+            pq.offer(new Node(v, i, 0));
+            if (v > currentMax) currentMax = v;
+        }
+
+        int rangeStart = pq.peek().val;
+        int rangeEnd = currentMax;
+        int bestLen = rangeEnd - rangeStart;
+
+        while (pq.size() == k) {
+            Node cur = pq.poll();
+            int curMin = cur.val;
+            int curLen = currentMax - curMin;
+            if (curLen < bestLen || (curLen == bestLen && curMin < rangeStart)) {
+                bestLen = curLen;
+                rangeStart = curMin;
+                rangeEnd = currentMax;
+            }
+
+            int nextIdx = cur.idx + 1;
+            if (nextIdx == nums.get(cur.row).size()) break;
+            int nextVal = nums.get(cur.row).get(nextIdx);
+            pq.offer(new Node(nextVal, cur.row, nextIdx));
+            if (nextVal > currentMax) currentMax = nextVal;
+        }
+
+        return new int[]{rangeStart, rangeEnd};
+    }
+}
