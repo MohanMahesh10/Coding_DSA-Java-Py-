@@ -1,0 +1,44 @@
+import java.util.*;
+
+class Solution {
+    public boolean isRectangleCover(int[][] rectangles) {
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+        int maxA = Integer.MIN_VALUE, maxB = Integer.MIN_VALUE;
+        long areaSum = 0L;
+        Set<String> corners = new HashSet<>();
+
+        for (int[] r : rectangles) {
+            int x1 = r[0], y1 = r[1], x2 = r[2], y2 = r[3];
+
+            minX = Math.min(minX, x1);
+            minY = Math.min(minY, y1);
+            maxA = Math.max(maxA, x2);
+            maxB = Math.max(maxB, y2);
+
+            areaSum += (long) (x2 - x1) * (y2 - y1);
+
+            String[] pts = {
+                x1 + " " + y1,
+                x1 + " " + y2,
+                x2 + " " + y1,
+                x2 + " " + y2
+            };
+
+            for (String p : pts) {
+                if (!corners.add(p)) corners.remove(p);
+            }
+        }
+
+        long bigArea = (long) (maxA - minX) * (maxB - minY);
+        if (areaSum != bigArea) return false;
+
+        if (corners.size() != 4) return false;
+
+        if (!corners.contains(minX + " " + minY)) return false;
+        if (!corners.contains(minX + " " + maxB)) return false;
+        if (!corners.contains(maxA + " " + minY)) return false;
+        if (!corners.contains(maxA + " " + maxB)) return false;
+
+        return true;
+    }
+}
