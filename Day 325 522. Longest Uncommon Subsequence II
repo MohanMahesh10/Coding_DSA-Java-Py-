@@ -1,0 +1,30 @@
+class Solution {
+    public int findLUSlength(String[] strs) {
+        int n = strs.length;
+        int res = -1;
+        for (int i = 0; i < n; i++) {
+            boolean uncommon = true;
+            for (int j = 0; j < n; j++) {
+                if (i == j) continue;
+                if (isSubsequence(strs[i], strs[j])) {
+                    uncommon = false;
+                    break;
+                }
+            }
+            if (uncommon) {
+                res = Math.max(res, strs[i].length());
+            }
+        }
+        return res;
+    }
+    
+    private boolean isSubsequence(String a, String b) {
+        if (a.length() > b.length()) return false;
+        int i = 0, j = 0;
+        while (i < a.length() && j < b.length()) {
+            if (a.charAt(i) == b.charAt(j)) i++;
+            j++;
+        }
+        return i == a.length();
+    }
+}
