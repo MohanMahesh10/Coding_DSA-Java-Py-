@@ -1,0 +1,23 @@
+import java.util.TreeSet;
+
+class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int indexDiff, int valueDiff) {
+        if (valueDiff < 0 || indexDiff <= 0) return false;
+
+        TreeSet<Long> set = new TreeSet<>();
+        long t = (long) valueDiff;
+
+        for (int i = 0; i < nums.length; i++) {
+            long x = (long) nums[i];
+            Long cand = set.ceiling(x - t);
+            if (cand != null && cand <= x + t) return true;
+
+            set.add(x);
+
+            if (i >= indexDiff) {
+                set.remove((long) nums[i - indexDiff]);
+            }
+        }
+        return false;
+    }
+}
