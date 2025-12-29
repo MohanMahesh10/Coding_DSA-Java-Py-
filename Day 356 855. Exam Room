@@ -1,0 +1,62 @@
+import java.util.*;
+
+class ExamRoom {
+    private final int n;
+    private final TreeSet<int[]> set;
+    private final Map<Integer, Integer> left;
+    private final Map<Integer, Integer> right;
+
+    public ExamRoom(int n) {
+        this.n = n;
+        this.left = new HashMap<>();
+        this.right = new HashMap<>();
+        this.set = new TreeSet<>((a, b) -> {
+            int da = dist(a);
+            int db = dist(b);
+            if (da != db) return db - da;
+            return a[0] - b[0];
+        });
+        add(new int[]{-1, n});
+    }
+
+    public int seat() {
+        int[] itv = set.first();
+        int l = itv[0], r = itv[1];
+        int p;
+        if (l == -1) p = 0;
+        else if (r == n) p = n - 1;
+        else p = (l + r) / 2;
+
+        remove(itv);
+        add(new int[]{l, p});
+        add(new int[]{p, r});
+        return p;
+    }
+
+    public void leave(int p) {
+        int l = left.get(p);
+        int r = right.get(p);
+        remove(new int[]{l, p});
+        remove(new int[]{p, r});
+        add(new int[]{l, r});
+    }
+
+    private int dist(int[] itv) {
+        int l = itv[0], r = itv[1];
+        if (l == -1) return r;
+        if (r == n) return n - 1 - l;
+        return (r - l) / 2;
+    }
+
+    private void add(int[] itv) {
+        set.add(itv);
+        left.put(itv[1], itv[0]);
+        right.put(itv[0], itv[1]);
+    }
+
+    private void remove(int[] itv) {
+        set.remove(itv);
+        left.remove(itv[1]);
+        right.remove(itv[0]);
+    }
+}
